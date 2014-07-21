@@ -27,7 +27,7 @@ processor <- function(csv_filename) {
     Stems and removes stopwords from the text of the first column of a .csv file.
     
     Input:
-    1. csv_filename:    a string: the name of the tab-delimited .csv file that contains the data
+    1. csv_filename:    a string: the name of the .csv file that contains the data 
     
     Output:
     1. final_data:      a data frame: a data frame containing the processed text data and its metadata
