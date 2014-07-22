@@ -38,16 +38,17 @@ processor <- function(csv_filename) {
     just_text <- original_data[,1]
     text_corpus <- Corpus(DataframeSource(data.frame(just_text)))
     stemmed_text <- tm_map(text_corpus, stemDocument, language="english")
-    
-    removed_text <- tm_map(stemmed_text, removeWords, stopwords("english"))
-    corpus_dict <- as.character(text_corpus)
-    new_text <- tm_map(removed_text, stemCompletion, dictionary=corpus_dict)
-    #new_text <- tm_map(stemmed_text, removeWords, stopwords("english"))
+    #url_less_text <- tm_map(stemmed_text, removeURL)
+    #cleaner_text <- tm_map(url_less_text, removePunctuation)
+    #even_cleaner_text <- tm_map(cleaner_text, removeNumbers)
+    #removed_text <- tm_map(even_cleaner_text, removeWords, stopwords("english"))
+    #corpus_dict <- as.character(text_corpus)
+    #new_text <- tm_map(removed_text, stemCompletion, dictionary=corpus_dict)
     
     # Replaces the leftmost column in the original data frame with the processed text.
     metadata <- original_data[,-1]
     new_text_frame <- t(as.data.frame(new_text))
-    final_data <- data.frame(new_text_frame, metadata)
+    final_data <- data.frame(stemmed_text, metadata)
     
     return(final_data)
     
