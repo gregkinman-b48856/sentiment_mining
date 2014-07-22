@@ -7,8 +7,6 @@ text_miner.R
 Mines web-scraped text.
 "
 
-setwd("c:/users/b48856/documents/sentiment/sentiment_mining/")
-
 library(tm)
 
 main <- function() {
@@ -27,7 +25,7 @@ processor <- function(csv_filename) {
     Stems and removes stopwords from the text of the first column of a .csv file.
     
     Input:
-    1. csv_filename:    a string: the name of the .csv file that contains the data 
+    1. csv_filename:    a string: the name of the .csv file that contains the data
     
     Output:
     1. final_data:      a data frame: a data frame containing the processed text data and its metadata
@@ -43,7 +41,6 @@ processor <- function(csv_filename) {
     
     removed_text <- tm_map(stemmed_text, removeWords, stopwords("english"))
     corpus_dict <- as.character(text_corpus)
-    print(corpus_dict)
     new_text <- tm_map(removed_text, stemCompletion, dictionary=corpus_dict)
     #new_text <- tm_map(stemmed_text, removeWords, stopwords("english"))
     
