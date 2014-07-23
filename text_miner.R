@@ -17,6 +17,8 @@ main <- function() {
     
     test_data <- processor("test_text.csv")
     
+    elicitor(test_data)
+    
 }
 
 processor <- function(csv_filename) {
@@ -32,25 +34,56 @@ processor <- function(csv_filename) {
     "
     
     # Loads the file data into a data frame.
-    original_data <- read.csv(csv_filename)
+    test_data <- read.csv(csv_filename)
     
-    # Pulls just the text column (the leftmost column) and stems and removes stopwords.
-    just_text <- original_data[,1]
-    text_corpus <- Corpus(DataframeSource(data.frame(just_text)))
-    stemmed_text <- tm_map(text_corpus, stemDocument, language="english")
-    #url_less_text <- tm_map(stemmed_text, removeURL)
-    #cleaner_text <- tm_map(url_less_text, removePunctuation)
-    #even_cleaner_text <- tm_map(cleaner_text, removeNumbers)
-    #removed_text <- tm_map(even_cleaner_text, removeWords, stopwords("english"))
-    #corpus_dict <- as.character(text_corpus)
-    #new_text <- tm_map(removed_text, stemCompletion, dictionary=corpus_dict)
+    # Pulls just the text column (the leftmost column) into a corpus.
+    test_text <- test_data[,1]
+    text_corpus <- Corpus(DataframeSource(data.frame(test_text)))
+    
+    # Cleans up the text.
+    text_corpus <- tm_map(text_corpus, tolower)
+    text_corpus <- tm_map(text_corpus, removePunctuation)
+    text_corpus <- tm_map(text_corpus, removeNumbers)
+    removeURL <- function(x) gsub("http:[[:alnum:]]*", "", x)
+    text_corpus <- tm_map(text_corpus, removeURL)
+    text_corpus <- tm_map(text_corpus, removeWords, stopwords("english"))
+    
+    # Stems and re-completes the text.
+    text_corpus_copy <- text_corpus
+    text_corpus <- tm_map(text_corpus, stemDocument)
+    text_corpus <- tm_map(text_corpus, stemCompletion, dictionary=text_corpus_copy)
     
     # Replaces the leftmost column in the original data frame with the processed text.
-    metadata <- original_data[,-1]
-    new_text_frame <- t(as.data.frame(new_text))
-    final_data <- data.frame(stemmed_text, metadata)
+    metadata <- test_data[,-1]
+    Snippets <- t(as.data.frame(text_corpus))
+    final_data <- data.frame(Snippets, metadata)
     
     return(final_data)
+    
+}
+
+elicitor <- function(text_data) {
+    
+    "
+    DOCSTRING
+    "
+    
+    # Pulls just the text.
+    text_snippets <- text_data$Snippets
+    
+    text_corpus <- Corpus(DataframeSource(data.frame(text_snippets)))
+    
+    text_tdm <- 
+    
+}
+
+grouper <- function(text_frame) {
+    
+    "
+    DOCSTRING
+    "
+    
+    
     
 }
 
