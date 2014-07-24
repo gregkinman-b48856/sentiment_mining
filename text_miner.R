@@ -8,6 +8,8 @@ Mines web-scraped text.
 "
 
 library(tm)
+library(ggplot2)
+library(wordcloud)
 
 main <- function() {
     
@@ -68,12 +70,12 @@ elicitor <- function(text_data) {
     DOCSTRING
     "
     
-    # Pulls just the text.
+    # Finds frequent terms.
     text_snippets <- text_data$Snippets
-    
     text_corpus <- Corpus(DataframeSource(data.frame(text_snippets)))
-    
-    text_tdm <- 
+    text_tdm <- TermDocumentMatrix(text_corpus)
+    frequent_terms <- findFreqTerms(text_tdm, lowfreq = 2)
+    print(frequent_terms)
     
 }
 
@@ -83,7 +85,7 @@ grouper <- function(text_frame) {
     DOCSTRING
     "
     
-    
+    text_groups <- by()
     
 }
 
