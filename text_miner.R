@@ -17,7 +17,7 @@ main <- function() {
     Driver function for text processing.
     "
     
-    test_data <- processor("test_text.csv")
+    test_data <- processor("value_3.csv")
     
     elicitor(test_data)
     
@@ -74,18 +74,8 @@ elicitor <- function(text_data) {
     text_snippets <- text_data$Snippets
     text_corpus <- Corpus(DataframeSource(data.frame(text_snippets)))
     text_tdm <- TermDocumentMatrix(text_corpus)
-    frequent_terms <- findFreqTerms(text_tdm, lowfreq = 2)
+    frequent_terms <- findFreqTerms(text_tdm, lowfreq = 5)
     print(frequent_terms)
-    
-}
-
-grouper <- function(text_frame) {
-    
-    "
-    DOCSTRING
-    "
-    
-    text_groups <- by()
     
 }
 
