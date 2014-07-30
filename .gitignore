@@ -3,5 +3,6 @@
 *.csv
 *.pdf
 test.R
+test.py
 .Rproj.user
 rdmTweets.RData
