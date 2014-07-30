@@ -105,8 +105,7 @@ elicitor <- function(text_data, sentiment) {
             related_terms <- c(related_terms, word_1)
         }
     }
-    
-    # TODO: Bar plots, word clouds, most frequent search keywords, etc.
+    print(related_terms)
     
     # Clustering:
     
