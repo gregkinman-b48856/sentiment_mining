@@ -8,8 +8,7 @@ Mines web-scraped text.
 "
 
 library(tm)
-library(ggplot2)
-library(wordcloud)
+library(igraph)
 
 main <- function() {
     
@@ -52,7 +51,8 @@ processor <- function(csv_filename) {
     text_corpus <- tm_map(text_corpus, removeNumbers)
     removeURL <- function(x) gsub("http:[[:alnum:]]*", "", x)
     text_corpus <- tm_map(text_corpus, removeURL)
-    text_corpus <- tm_map(text_corpus, removeWords, stopwords("english"))
+    my_stopwords <- c(stopwords("english"), "can", "will", "just", "much", "use")
+    text_corpus <- tm_map(text_corpus, removeWords, my_stopwords)
     
     # Stems and re-completes the text.
     text_corpus_copy <- text_corpus
@@ -87,6 +87,7 @@ elicitor <- function(text_data, sentiment) {
     for (freq in seq(50, 5, -5)) {
         frequent_terms <- findFreqTerms(text_tdm, lowfreq = freq)
         if (length(frequent_terms) > 9) {
+            this_freq <- freq
             break
         }
     }
@@ -95,17 +96,32 @@ elicitor <- function(text_data, sentiment) {
     no_words <- c("freescale", "i.mx", "imx", "kinetis", "qoriq", "riotboard", "riot", "board")
     related_terms <- vector(mode = "character", length=0)
     for (word_1 in frequent_terms) {
-        allowed = T
+        allowed = TRUE
         for (word_2 in no_words) {
             if (word_1 == word_2) {
-                allowed = F
+                allowed = FALSE
             }
         }
-        if (allowed == T) {
+        if (allowed == TRUE) {
             related_terms <- c(related_terms, word_1)
         }
     }
+    print(sentiment)
+    print(":")
     print(related_terms)
+    
+    # Bar plots of most frequent terms:
+    
+    frequencies <- rowSums(as.matrix(text_tdm))
+    frequencies <- subset(frequencies, frequencies>=this_freq)
+    barplot(frequencies, las=2, horiz=TRUE)
+    
+    # Finds word associations for the product families.
+    
+    print(findAssocs(text_tdm, "freescale", 0.4))
+    print(findAssocs(text_tdm, "kinetis", 0.4))
+    print(findAssocs(text_tdm, "riotboard", 0.4))
+    print(findAssocs(text_tdm, "imx", 0.4))
     
     # Clustering:
     
@@ -114,9 +130,21 @@ elicitor <- function(text_data, sentiment) {
     dist_mat <- dist(scale(mat))
     fit <- hclust(dist_mat, method="ward.D")
     plot(fit)
-    title(main="Word Clusters", sub=sentiment)
     rect.hclust(fit, k=8)
     groups <- cutree(fit, k=8)
+    
+    # Network analysis (need to figure out how to make this a graph only on a subset of the nodes):
+    
+    #text_tdm <- as.matrix(text_tdm)
+    #text_tdm[text_tdm>=1] <- 1
+    #text_tdm <- as.matrix(text_tdm) %*% as.matrix(t(text_tdm))
+    #g <- graph.adjacency(text_tdm, weighted=TRUE, mode="undirected")
+    #g <- simplify(g)
+    #V(g)$label <- V(g)$name
+    #V(g)$degree <- degree(g)
+    #set.seed(3952)
+    #layout1 <- layout.fruchterman.reingold(g)
+    #plot(g, layout=layout1)
     
 }
 
